@@ -54,5 +54,8 @@ func getTimerEntries(db *sql.DB) []TimerEntry {
 		}
 		entries = append(entries, entry)
 	}
+	if entries == nil {
+		entries = make([]TimerEntry, 0)
+	}
 	return entries
 }
