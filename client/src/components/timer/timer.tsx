@@ -1,6 +1,6 @@
 "use client"
 import { saveTimerEntry } from "@/api/timer"
-import React, { useState } from "react"
+import React from "react"
 import { getTime } from "@/components/timer/utils"
 
 type TimerProps = {
