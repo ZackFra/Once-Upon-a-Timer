@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"github.com/gofiber/fiber/v3"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 type TimerEntry struct {
-	time        int64
-	author      string
-	description string
+	Time        int64  `json:"time"`
+	Author      string `json:"author"`
+	Description string `json:"description"`
 }
 
 const file string = "timer.db"
@@ -37,12 +38,14 @@ func main() {
 		if err := c.Bind().Body(&entry); err != nil {
 			return c.Status(400).SendString(err.Error())
 		}
+		log.Printf("Received entry: %v", entry)
 		insertTimerEntry(*entry)
 		return c.SendString("Inserted entry")
 	})
 
 	app.Get("/get", func(c fiber.Ctx) error {
 		entries := getTimerEntries()
+		log.Printf("Returning entries: %v", entries)
 		return c.JSON(entries)
 	})
 
@@ -63,7 +66,7 @@ func insertTimerEntry(entry TimerEntry) {
 
 	const insert string = `INSERT INTO timer 
 		(time, author, description) VALUES (?, ?, ?);`
-	_, err = db.Exec(insert, entry.time, entry.author, entry.description)
+	_, err = db.Exec(insert, entry.Time, entry.Author, entry.Description)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +79,7 @@ func getTimerEntries() []TimerEntry {
 	}
 
 	const selectAll string = `
-	SELECT time, author, description 
+	SELECT SUM(time), author, description 
 	FROM timer 
 	GROUP BY author;`
 	rows, err := db.Query(selectAll)
@@ -88,7 +91,7 @@ func getTimerEntries() []TimerEntry {
 	var entries []TimerEntry
 	for rows.Next() {
 		var entry TimerEntry
-		err = rows.Scan(&entry.time, &entry.author, &entry.description)
+		err = rows.Scan(&entry.Time, &entry.Author, &entry.Description)
 		if err != nil {
 			panic(err)
 		}
