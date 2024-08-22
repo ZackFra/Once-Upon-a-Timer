@@ -1,11 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react"
-
-interface TimerEntry {
-    author: string
-    description: string
-    time: number
-}
+import React from "react"
 
 const Dashboard = ({ timerEntries }: { timerEntries: TimerEntry[] }) => {
 
@@ -16,15 +10,14 @@ const Dashboard = ({ timerEntries }: { timerEntries: TimerEntry[] }) => {
                 <thead>
                     <tr>
                         <th>Author</th>
-                        <th>Description</th>
                         <th>Time Tracked</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {timerEntries.map((entry, i) => (
                         <tr key={i}>
                             <td>{entry.author}</td>
-                            <td>{entry.description}</td>
                             <td>{entry.time}</td>
                         </tr>
                     ))}

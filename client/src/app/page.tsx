@@ -1,26 +1,12 @@
-import React, { useMemo, useState } from 'react'
-import Timer from '@/components/timer/timer';
-import Dashboard from '@/components/dashboard/dashboard';
-
-const getTimerEntries = async () => {
-  const res = await fetch("http://localhost:3000/api/get", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch timer entries")
-  }
-  const body = await res.json();
-  return body
-}
+import React from 'react'
+import Tabs from '@/components/tabs/tabs';
+import { getTimerEntries } from '@/api/timer';
 
 const Home = async () => {
+  const timerEntries = await getTimerEntries()
   return (
     <main className="flex justify-center flex-row">
-      <Dashboard timerEntries={await getTimerEntries()} />
-      <Timer />
+      <Tabs timerEntries={timerEntries} />
     </main>
   );
 }

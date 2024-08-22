@@ -1,36 +1,39 @@
 "use client"
+import { saveTimerEntry } from "@/api/timer"
 import React, { useState } from "react"
-import useTimer from "@/hooks/use-timer/use-timer"
-const Timer = () => {
-    const [isPaused, setIsPaused] = useState(false)
-    const [text, setText] = useState("")
-    const [fullName, setFullName] = useState("")
-    const time = useTimer(isPaused)
+import { getTime } from "@/components/timer/utils"
+
+type TimerProps = {
+    time: number
+    toggleTimer: () => void
+    isPaused: boolean
+    resetTimer: () => void
+    text: string
+    setText: (text: string) => void
+    fullName: string
+    setFullName: (fullName: string) => void
+}
+const Timer = ({
+    time,
+    toggleTimer,
+    isPaused,
+    resetTimer,
+    text,
+    setText,
+    fullName,
+    setFullName
+}: TimerProps) => {
     const onPause = () => {
-        setIsPaused(!isPaused)
+        toggleTimer()
     }
+
     const onSave = () => {
-        console.log({
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: {
-                author: fullName,
-                description: text,
-                time
-            }
-        })
-        fetch("/api/insert", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                author: fullName,
-                description: text,
-                time
-            })
+        resetTimer()
+        setText("")
+        saveTimerEntry({
+            author: fullName,
+            description: text,
+            time
         })
     }
 
@@ -80,24 +83,4 @@ const Timer = () => {
         </div >
     )
 }
-
-const getTime = (timeInSeconds: number): string => {
-    if (timeInSeconds < 10) {
-        return `00:00:${padLeftWithZero(timeInSeconds)}`
-    } else if (timeInSeconds < 3600) {
-        const minutes = padLeftWithZero(Math.floor(timeInSeconds / 60))
-        const seconds = padLeftWithZero(timeInSeconds % 60)
-        return `00:${minutes}:${seconds}`
-    } else {
-        const hours = padLeftWithZero(Math.floor(timeInSeconds / 3600))
-        const minutes = padLeftWithZero(Math.floor((timeInSeconds % 3600) / 60))
-        const seconds = padLeftWithZero(timeInSeconds % 60)
-        return `${hours}:${minutes}:${seconds}`
-    }
-}
-
-const padLeftWithZero = (num: number): string => {
-    return ("" + num).padStart(2, "0")
-}
-
 export default Timer

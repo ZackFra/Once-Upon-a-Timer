@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
-const useTimer = (isPaused: boolean) => {
+const useTimer = (isPaused: boolean): [number, () => void] => {
     const [time, setTime] = useState(0)
     const [lastTimeStamp, setLastTimeStamp] = useState(now())
     useEffect(() => {
@@ -21,8 +21,11 @@ const useTimer = (isPaused: boolean) => {
             }
         }
     }, [time, lastTimeStamp, isPaused])
-
-    return time
+    const resetTimer = () => {
+        setTime(0)
+        setLastTimeStamp(now())
+    }
+    return [time, resetTimer]
 }
 
 interface Performance {
